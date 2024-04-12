@@ -5,3 +5,13 @@
 .px-6 {
     padding-inline: 10%;
 }
+
+.px-0 {
+    padding-inline: 0px;
+}
+
+
+
+.mb-0 {
+    margin-bottom: 0px;
+}

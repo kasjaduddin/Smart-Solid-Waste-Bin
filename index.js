@@ -59,4 +59,4 @@ function strDay() {
       }
 }
 
-Time.innerHTML = `<p class="text-secondary fw-semibold">${strDay() + ", " + date + " " + strMonth() + " " + year + " " + hour + ":" + minute + ":" + second}</p>`;
+Time.innerHTML = `<p class="text-secondary fw-semibold pb-0 mb-0">${strDay() + ", " + date + " " + strMonth() + " " + year + " " + hour + ":" + minute + ":" + second}</p>`;

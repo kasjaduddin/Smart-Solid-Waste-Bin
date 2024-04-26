@@ -1,3 +1,68 @@
+//  /**
+//      * this demo uses EMQX Public MQTT Broker (https://www.emqx.com/en/mqtt/public-mqtt5-broker), here are the details:
+//      *
+//      * Broker host: broker.emqx.io
+//      * WebSocket port: 8083
+//      * WebSocket over TLS/SSL port: 8084
+//      */
+//  const clientId = 'mqttjs_' + Math.random().toString(16).substring(2, 8)
+
+//  /**
+//   * choose which protocol to use for connection here
+//   *
+//   * /mqtt: MQTT-WebSocket uniformly uses /path as the connection path,
+//   * which should be specified when connecting, and the path used on EMQX is /mqtt.
+//   *
+//   * for more details about "mqtt.connect" method & options,
+//   * please refer to https://github.com/mqttjs/MQTT.js#mqttconnecturl-options
+//   */
+//  const connectUrl = 'ws://192.168.34.81:8083/mqtt'
+
+
+//  const options = {
+//    keepalive: 30,
+//    clientId: clientId,
+//    clean: true,
+//    connectTimeout: 5000,
+//    username: 'uddin',
+//    password: '12345678',
+//    reconnectPeriod: 1000,
+//  }
+//  const topic = 'sensor/data'
+//  const payload = 'WebSocket mqtt test'
+//  const qos = 2;
+
+//  console.log('connecting mqtt client')
+//  const client = mqtt.connect(connectUrl, options)
+
+//  client.on('error', (err) => {
+//    console.log('Connection error: ', err)
+//    client.end()
+//  })
+
+//  client.on('reconnect', () => {
+//    console.log('Reconnecting...')
+//  })
+
+//  client.on('connect', () => {
+//    console.log('Client connected:' + clientId)
+
+//    client.subscribe(topic, { qos }, (error) => {
+//      if (error) {
+//        console.log('Subscribe error:', error)
+//        return
+//      }
+//      console.log(`Subscribe to topic ${topic}`)
+//    })
+//  })
+
+//  client.on('message', (topic, payload) => {
+//    console.log(
+//      'Received Message: ' + payload.toString() + '\nOn topic: ' + topic
+//    )
+//  })
+
+
 var localTime = new Date();
 var year = localTime.getFullYear().toString();
 var month = (localTime.getMonth() + 1);

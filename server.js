@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const app = express();
 const db = require("./config/keys").mongoURI;
-// const users = require("./routes/api/users");
+const sensors = require("./routes/api/sensors");
 const path = require('path');
 
 mongoose
@@ -16,7 +16,7 @@ app.use(bodyParser.json());
 
 //routes
 app.use(express.static('public'))
-//app.use('/api/users',users);
+app.use('/api/sensors',sensors);
 
 const port = process.env.PORT || 5000;
 

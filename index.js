@@ -61,7 +61,7 @@
 //      'Received Message: ' + payload.toString() + '\nOn topic: ' + topic
 //    )
 //  })
-
+let getData = require('./routes/api/sensors') 
 
 var localTime = new Date();
 var year = localTime.getFullYear().toString();

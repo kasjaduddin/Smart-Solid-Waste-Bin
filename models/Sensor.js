@@ -33,4 +33,16 @@ const SensorSchema = new schema({
     }
 });
 
-module.exports = Sensor = mongoose.model("sensorMonitor",SensorSchema);
+sensorTable=mongoose.model("sensorMonitor",SensorSchema);
+        
+module.exports={
+     
+     fetchData:function(callback){
+        var sensorData=sensorTable.find({});
+        sensorData.exec(function(err, data){
+            if(err) throw err;
+            return callback(data);
+        })
+        
+     }
+}

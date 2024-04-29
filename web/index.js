@@ -10,7 +10,6 @@ var maxHeight = 60;
 var maxWeight = 1000;
 var statusBedge = `<span class="badge text-bg-success">Belum Terisi</span>`;
 
-
 function strMonth() {
     switch(month) {
         case 1:

@@ -1,66 +1,76 @@
-var localTime = new Date();
-var year = localTime.getFullYear().toString();
-var month = (localTime.getMonth() + 1);
-var day = (localTime.getDay() + 1);
-var date = localTime.getDate().toString();
-var hour = localTime.getHours().toString();
-var minute = localTime.getMinutes().toString();
-var second = localTime.getSeconds().toString();
-var maxHeight = 60;
-var maxWeight = 1000;
-var statusBedge = `<span class="badge text-bg-success">Belum Terisi</span>`;
+import express from 'express';
+import http from 'http';
+import { dirname, join } from 'node:path';
+import { Server } from 'socket.io'
+import { connect } from 'mqtt';
+import { fileURLToPath } from 'url';
+import { strDay, strMonth} from './date.js';
 
-function strMonth() {
-    switch(month) {
-        case 1:
-          return "Januari";
-        case 2:
-          return "Februari";
-        case 3:
-            return "Maret";
-        case 4:
-          return "April";
-        case 5:
-          return "Mei";
-        case 6:
-            return "Juni";
-        case 7:
-          return "Juli";
-        case 8:
-          return "Agustus";
-        case 9:
-            return "September";
-        case 10:
-          return "Oktober";
-        case 11:
-          return "November";
-        case 12:
-            return "Desember";
-        default:
-          console("Error");
-      }
+const client = connect('mqtt://broker.hivemq.com');
+
+const app = express();
+const server = http.createServer(app);
+const io = new Server(server);
+
+var dateNow = {
+    "day": "",
+    "date": "",
+    "month": "",
+    "year": "",
+    "hour": "",
+    "minute": "",
+    "second": ""
 }
 
-function strDay() {
-    switch(day) {
-        case 1:
-          return "Ahad";
-        case 2:
-          return "Senin";
-        case 3:
-            return "Selasa";
-        case 4:
-          return "Rabu";
-        case 5:
-          return "Kamis";
-        case 6:
-            return "Jumat";
-        case 7:
-          return "Sabtu";
-        default:
-          console("Error");
-      }
+function updateDate() {
+    var localTime = new Date();
+    var year = localTime.getFullYear().toString();
+    var month = (localTime.getMonth() + 1);
+    var day = (localTime.getDay() + 1);
+    var date = localTime.getDate().toString();
+    var hour = localTime.getHours().toString();
+    var minute = localTime.getMinutes().toString();
+    dateNow = {
+        "day": strDay(day),
+        "date": date,
+        "month": strMonth(month),
+        "year": year,
+        "hour": hour,
+        "minute": minute
+    }
 }
 
-Time.innerHTML = `<p class="text-secondary fw-semibold pb-0 mb-0">${strDay() + ", " + date + " " + strMonth() + " " + year + " " + hour + ":" + minute + ":" + second}</p>`;
+const __dirname = dirname(fileURLToPath(import.meta.url));
+app.get('/', (req, res) => {
+    res.sendFile(join(__dirname, 'index.html'))
+});
+app.use('/asset', express.static(__dirname + "/asset"));
 
+client.on('connect', () => {
+    console.log("Connected to broker");
+    io.on('connection', (socket) => {
+        console.log("Connected to client");
+    });
+    // Subscribe to a topic named testtopic with QoS 0
+    client.subscribe('segokuningteam/data', { qos: 1 }, function (error, granted) {
+        if (error) {
+        console.log(error);
+        } else {
+        console.log(`${granted[0].topic} was subscribed`);
+        }
+    });
+});
+
+client.on('message', function (topic, payload, packet) {
+    updateDate();
+    io.emit('date', dateNow);
+    io.emit('payload', payload.toString());
+  });
+
+
+const PORT = 3000;
+server.listen(PORT, () => {
+    console.log(`Server running on ${PORT}`);
+  });
+
+  

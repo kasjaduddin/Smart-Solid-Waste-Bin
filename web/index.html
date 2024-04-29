@@ -22,29 +22,29 @@
     </nav>
     <div class="container-fluid px-6">
       <div class="d-flex py-4">
-        <h4 class="fw-bold me-auto mb-0 pb-0">Monitor Tempat Sampah</h4>
-        <p id="Time" class="text-secondary fw-semibold mb-0 pb-0">Jumat, 12 April 2024 08:57:12</p>
+        <h4 class="fw-bold me-auto mb-0 pb-0">Trash Bin Monitor</h4>
+        <p id="Time"></p>
       </div>
       <div class="border rounded-5">
         <table class="table text-center mb-0">
           <thead>
             <tr>
-              <th class="text-start" scope="col">Lokasi</th>
-              <th scope="col">Kelembaban (%)</th>
-              <th scope="col">Suhu (°C)</th>
-              <th scope="col">Berat (g)</th>
-              <th scope="col">Tinggi sampah (cm)</th>
+              <th class="text-start" scope="col">Location</th>
+              <th scope="col">Humidity (%)</th>
+              <th scope="col">Temperature (°C)</th>
+              <th scope="col">Weight (g)</th>
+              <th scope="col">Trash Level (cm)</th>
               <th scope="col">Status</th>
             </tr>
           </thead>
           <tbody>
             <tr>
               <th class="text-start" scope="row">Departemen Teknik Nuklir dan Teknik Fisika</th>
-              <td>50</td>
-              <td>24</td>
-              <td>800/1000</td>
-              <td>58/60</td>
-              <td><span class="badge text-bg-danger">Penuh</span></td>
+              <td id="Humidity"></td>
+              <td id="Temperature"></td>
+              <td id="Weight"></td>
+              <td id="Distance"></td>
+              <td><span id="Status"></span></td>
             </tr>
             <tr>
               <th class="text-start" scope="row">Departemen Teknologi Informasi</th>
@@ -52,7 +52,7 @@
               <td>23</td>
               <td>980/1000</td>
               <td>55/60</td>
-              <td><span class="badge text-bg-danger">Penuh</span></td>
+              <td><span class="badge text-bg-danger">Full</span></td>
             </tr>
             <tr>
               <th class="text-start" scope="row">Departemen Teknik Geologi</th>
@@ -60,7 +60,7 @@
               <td>21</td>
               <td>550/1000</td>
               <td>40/60</td>
-              <td><span class="badge text-white text-bg-warning">Setengah Penuh</span></td>
+              <td><span class="badge text-white text-bg-warning">Half Full</span></td>
             </tr>
             <tr>
               <th class="text-start" scope="row">Departemen Teknik Sipil</th>
@@ -68,7 +68,7 @@
               <td>26</td>
               <td>400/1000</td>
               <td>35/60</td>
-              <td><span class="badge text-white text-bg-warning">Setengah Penuh</span></td>
+              <td><span class="badge text-white text-bg-warning">Half Full</span></td>
             </tr>
             <tr>
               <th class="text-start" scope="row">Departemen Teknik Kimia</th>
@@ -76,7 +76,7 @@
               <td>25</td>
               <td>600/1000</td>
               <td>30/60</td>
-              <td><span class="badge text-white text-bg-warning">Setengah Penuh</span></td>
+              <td><span class="badge text-white text-bg-warning">Half Full</span></td>
             </tr>
             <tr>
               <th class="text-start" scope="row">Departemen Teknik Mesin</th>
@@ -84,7 +84,7 @@
               <td>26</td>
               <td>200/1000</td>
               <td>9/60</td>
-              <td><span class="badge text-bg-success">Belum Terisi</span></td>
+              <td><span class="badge text-bg-success">Unfilled</span></td>
             </tr>
             <tr>
               <th class="text-start" scope="row">Departemen Teknik Arsitektur</th>
@@ -92,7 +92,7 @@
               <td>27</td>
               <td>100/1000</td>
               <td>12/60</td>
-              <td><span class="badge text-bg-success">Belum Terisi</span></td>
+              <td><span class="badge text-bg-success">Unfilled</span></td>
             </tr>
             <tr>
               <th class="text-start" scope="row">Departemen Teknik Geodesi</th>
@@ -100,7 +100,7 @@
               <td>21</td>
               <td>70/1000</td>
               <td>10/60</td>
-              <td><span class="badge text-bg-success">Belum Terisi</span></td>
+              <td><span class="badge text-bg-success">Unfilled</span></td>
             </tr>
             <tr>
               <th class="text-start" scope="row">Departemen Teknik Tinju</th>
@@ -108,7 +108,7 @@
               <td>29</td>
               <td>120/1000</td>
               <td>5/60</td>
-              <td><span class="badge text-bg-success">Belum Terisi</span></td>
+              <td><span class="badge text-bg-success">Unfilled</span></td>
             </tr>
           </tbody>
         </table>
@@ -117,15 +117,38 @@
     
     <script src="/socket.io/socket.io.js"></script>
     <script type="module">
+      var maxWeight = 1000;
+      var maxDistance = 60;
+
+      function getStatus(distance) {
+        if (distance/maxDistance <= 0.5)
+          Status.innerHTML = `<span class="badge text-bg-success">Unfilled</span>`;
+        else if (distance/maxDistance > 0.9)
+          Status.innerHTML = `<span class="badge text-bg-danger">Full</span>`;
+        else
+          Status.innerHTML = `<span class="badge text-white text-bg-warning">Half Full</span>`;
+      }
+
       const socket = io();
 
       socket.on('date', (date) => {
-        Time.innerHTML = `<p class="text-secondary fw-semibold pb-0 mb-0">${date.day + ", " + date.date + " " + date.month + " " + date.year + " " + date.hour + ":" + date.minute + ":" + date.second}</p>`;;
-        console.log(date)
+        Time.innerHTML = `<p class="text-secondary fw-semibold pb-0 mb-0">${date.day + ", " + date.date + " " + date.month + " " + date.year + " " + date.hour + ":" + date.minute}</p>`;
       });
       socket.on('payload', (payload) => {
         var data = JSON.parse(payload);
-        console.log(data);
+        data.Humidity = Math.round(data.Humidity);
+        data.Temperature = data.Temperature.toFixed(2);
+        if (data.Distance > 60)
+          data.Distance = 0;
+        else
+          data.Distance = 60 - Math.round(data.Distance);
+        data.Weight = data.Weight.toFixed(2);
+        console.log(data)
+        Humidity.innerHTML = `<td id="Humidity">${data.Humidity}</td>`;
+        Temperature.innerHTML = `<td id="Humidity">${data.Temperature}</td>`;
+        Weight.innerHTML = `<td id="Weight">${data.Weight}/${maxWeight}</td>`;
+        Distance.innerHTML = `<td id="Distance">${data.Distance}/${maxDistance}</td>`;
+        getStatus(data.Distance);
       });
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>

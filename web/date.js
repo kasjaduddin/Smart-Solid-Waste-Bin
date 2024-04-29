@@ -1,16 +1,8 @@
-var localTime = new Date();
-export var year = localTime.getFullYear().toString();
-export var month = (localTime.getMonth() + 1);
-export var day = (localTime.getDay() + 1);
-export var date = localTime.getDate().toString();
-export var hour = localTime.getHours().toString();
-export var minute = localTime.getMinutes().toString();
-export var second = localTime.getSeconds().toString();
 // var maxHeight = 60;
 // // var maxWeight = 1000;
 // var statusBedge = `<span class="badge text-bg-success">Belum Terisi</span>`;
 
-export function strMonth() {
+export function strMonth(month) {
     switch(month) {
         case 1:
           return "Januari";
@@ -41,7 +33,7 @@ export function strMonth() {
       }
 }
 
-export function strDay() {
+export function strDay(day) {
     switch(day) {
         case 1:
           return "Ahad";
